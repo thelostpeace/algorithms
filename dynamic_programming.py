@@ -118,6 +118,112 @@ def balanced_partition(data, K):
     return table[n][k]
 
 #data = np.random.randint(low=1, high=100, size=(10,)).tolist()
-data = [20, 60, 20, 64, 79, 2, 23, 46, 27, 47]
-print(data)
-print(balanced_partition(data, 3))
+#print(data)
+#print(balanced_partition(data, 3))
+
+###########################################
+# Longest Common Subsequence
+# LCS Problem Statement: Given two sequences, find the length of longest subsequence present in both of them. A subsequence is a sequence that appears in the same relative order, but not necessarily contiguous. For example, “abc”, “abg”, “bdf”, “aeg”, ‘”acefg”, .. etc are subsequences of “abcdefg”.
+# eg. "ABCDGH", "AEDFHR" is "ADH" is 3.
+# eg. "AGGTAB", "GXTXAYB" is "GTAB" is 4.
+
+def LCS(s1, s2):
+    def lcs_match(a, b):
+        if a == b:
+            return 1
+        else:
+            return 0
+
+    l1 = len(s1)
+    l2 = len(s2)
+
+    table = np.zeros(shape=(l1 + 1, l2 + 1), dtype=int)
+
+    for i in range(1, l1 + 1):
+        for j in range(1, l2 + 1):
+            table[i][j] = max([table[i - 1][j], table[i][j - 1], table[i - 1][j - 1] + lcs_match(s1[i - 1], s2[j - 1])])
+
+    print(table)
+
+    return table[i][j]
+
+#s1 = "ABCDGH"
+#s2 = "AEDFHR"
+#s1 = "AGGTAB"
+#s2 = "GXTXAYB"
+#print(LCS(s1, s2))
+
+###########################################
+# A person starts walking from position X = 0, find the probability to reach exactly on X = N if she can only take either 2 steps or 3 steps. Probability for step length 2 is given i.e. P, probability for step length 3 is 1 – P.
+# N = 5, p2 = 0.2, p3=0.8, output = 0.32
+# 挺有意思，其实这个是两个状态的Markov Chain，最终会趋近一个稳定值
+
+def step_probility(N, p2):
+    table = np.zeros(shape=(N + 1, ))
+    table[2] = p2
+    table[3] = 1 - p2
+
+    for i in range(4, N + 1):
+        table[i] = table[i - 2] * p2 + table[i - 3] * (1 - p2)
+
+    print(table)
+
+    return table[N]
+
+#print(step_probility(1000, 0.006309101))
+
+#######################################
+# Count number of ways to cover a distance
+# Given a distance ‘dist, count total number of ways to cover the distance with 1, 2 and 3 steps.
+
+def step_ways(N):
+    table = np.zeros(shape=(N + 1,), dtype=int)
+    table[1] = 1
+    table[2] = 2
+    table[3] = 4
+
+    for i in range(4, N + 1):
+        table[i] = table[i - 3] + table[i - 2] + table[i - 1]
+
+    print(table)
+
+    return table[N]
+
+#print(step_ways(50))
+
+#####################################
+# Find the longest path in a matrix with given constraints
+# Given a n*n matrix where all numbers are distinct, find the maximum length path (starting from any cell) such that all cells along the path are in increasing order with a difference of 1.
+#We can move in 4 directions from a given cell (i, j), i.e., we can move to (i+1, j) or (i, j+1) or (i-1, j) or (i, j-1) with the condition that the adjacent cells have a difference of 1.
+
+def longest_path_imp(mat, i, j, rows, cols):
+    cands = [1]
+    if i > 0 and mat[i][j] + 1 == mat[i-1][j]:
+        cands.append(longest_path_imp(mat, i - 1, j, rows, cols) + 1)
+    if i + 1 < rows and mat[i][j] + 1 == mat[i + 1][j]:
+        cands.append(longest_path_imp(mat, i + 1, j, rows, cols) + 1)
+    if j > 0 and mat[i][j] + 1 == mat[i][j - 1]:
+        cands.append(longest_path_imp(mat, i, j - 1, rows, cols) + 1)
+    if j + 1 < cols and mat[i][j] + 1 == mat[i][j + 1]:
+        cands.append(longest_path_imp(mat, i, j + 1, rows, cols) + 1)
+
+    return max(cands)
+
+def longest_path(mat):
+    rows = mat.shape[0]
+    cols = mat.shape[1]
+
+    table = np.ones(shape=(rows + 1, cols + 1), dtype=int)
+
+    for i in range(1, rows + 1):
+        for j in range(1, cols + 1):
+            table[i][j] = longest_path_imp(mat, i - 1, j - 1, rows, cols)
+
+    print(table)
+    return np.max(table)
+
+
+#mat = np.array([[1,2,9],[5,3,8],[4,6,7]])
+mat = np.random.randint(low=1, high=100, size=(10, 12), dtype=int)
+print(mat)
+print(longest_path(mat))
