@@ -224,6 +224,81 @@ def longest_path(mat):
 
 
 #mat = np.array([[1,2,9],[5,3,8],[4,6,7]])
-mat = np.random.randint(low=1, high=100, size=(10, 12), dtype=int)
-print(mat)
-print(longest_path(mat))
+#mat = np.random.randint(low=1, high=100, size=(10, 12), dtype=int)
+#print(mat)
+#print(longest_path(mat))
+
+######################################
+# Subset Sum Problem | DP-25
+# Given a set of non-negative integers, and a value sum, determine if there is a subset of the given set with sum equal to given sum.
+def has_sum(data, target):
+    size = len(data)
+    dp = np.zeros(shape=(size + 1, target + 1), dtype=int)
+    for i in range(size + 1):
+        dp[i][0] = 1
+
+    for i in range(1, size + 1):
+        for j in range(1, target + 1):
+            if j >= data[i - 1]:
+                dp[i][j] = (dp[i - 1][j - data[i - 1]]) or dp[i - 1][j]
+            else:
+                dp[i][j] = dp[i - 1][j]
+
+    print(dp)
+
+    return dp[size][target]
+
+#data = list(set(np.random.randint(low=1, high=50, size=(10,)).tolist()))
+#data = [3, 34, 4, 12, 5, 2]
+#target = 30
+#print(data, "=>", target)
+#print(has_sum(data, target))
+
+#############################################
+# Optimal Strategy for a Game | DP-31
+# Consider a row of n coins of values v1 . . . vn, where n is even. We play a game against an opponent by alternating turns. In each turn, a player selects either the first or last coin from the row, removes it from the row permanently, and receives the value of the coin. Determine the maximum possible amount of money we can definitely win if we move first.
+
+#Note: The opponent is as clever as the user.
+#
+#Let us understand the problem with few examples:
+#
+#5, 3, 7, 10 : The user collects maximum value as 15(10 + 5)
+#8, 15, 3, 7 : The user collects maximum value as 22(7 + 15)
+#Does choosing the best at each move gives an optimal solution? No.
+#In the second example, this is how the game can be finished:
+#
+#…….User chooses 8.
+#…….Opponent chooses 15.
+#…….User chooses 7.
+#…….Opponent chooses 3.
+#Total value collected by user is 15(8 + 7)
+#…….User chooses 7.
+#…….Opponent chooses 8.
+#…….User chooses 15.
+#…….Opponent chooses 3.
+#Total value collected by user is 22(7 + 15)
+#So if the user follows the second game state, the maximum value can be collected although the first move is not the best.
+def coin_game(data):
+    size = len(data)
+    dp = np.zeros(shape=(size, size))
+
+    # sequence from i to j, j > i
+    for gap in range(0, size):
+        for j in range(gap, size):
+            i = j - gap
+            if i == j:
+                dp[i][j] = data[i]
+            elif i + 1 == j:
+                dp[i][j] = max(data[i], data[j])
+            else:
+                dp[i][j] = max(data[i - 1] + min(dp[i + 2][j], dp[i + 1][j - 1]), data[j - 1] + min(dp[i + 1][j - 1], dp[i][j - 2]))
+
+    print(dp)
+
+    return dp[0][size - 1]
+
+data = np.random.randint(low=1, high=10, size=(8, ))
+#data = [5, 3, 7, 10]
+#data = [8, 15, 3, 7]
+print(data)
+print(coin_game(data))
