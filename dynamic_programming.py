@@ -14,6 +14,9 @@ LIS里面，这样LIS(n)就可以由LIS(1 ... n-1)推导出来，用DP解问题�
 
 对于balance partition，不好界定位置就直接假定最后位置，然后问题变小，最后只需要
 找到边界就能由底向上算出整个table
+
+动态规划解决问题，代码干净简单，很多问题都是有推导关系的，推导关系一旦成立，则
+考虑直接用动归求解，所有的递归都可以转化成动归，提高效率。
 '''
 
 # Edit Distance
@@ -297,8 +300,63 @@ def coin_game(data):
 
     return dp[0][size - 1]
 
-data = np.random.randint(low=1, high=10, size=(8, ))
+#data = np.random.randint(low=1, high=10, size=(8, ))
 #data = [5, 3, 7, 10]
 #data = [8, 15, 3, 7]
-print(data)
-print(coin_game(data))
+#print(data)
+#print(coin_game(data))
+
+#################################################
+# 0-1 Knapsack Problem | DP-10
+# Given weights and values of n items, put these items in a knapsack of capacity W to get the maximum total value in the knapsack. In other words, given two integer arrays val[0..n-1] and wt[0..n-1] which represent values and weights associated with n items respectively. Also given an integer W which represents knapsack capacity, find out the maximum value subset of val[] such that sum of the weights of this subset is smaller than or equal to W. You cannot break an item, either pick the complete item or don’t pick it (0-1 property).
+def knapsack(value, weight, W):
+    size = len(value)
+    dp = np.zeros(shape=(size + 1, W + 1))
+    for i in range(1, size + 1):
+        for j in range(1, W + 1):
+            if j >= weight[i-1]:
+                dp[i][j] = max(dp[i-1][j - weight[i-1]] + value[i-1], dp[i-1][j])
+            else:
+                dp[i][j] = dp[i-1][j]
+
+    print(dp)
+    return dp[size][W]
+
+#value = [60, 100, 120]
+#weight = [10, 20, 30]
+#W = 50
+#print(knapsack(value, weight, W))
+
+###############################################
+# Matrix Chain Multiplication | DP-8
+# Given a sequence of matrices, find the most efficient way to multiply these matrices together. The problem is not actually to perform the multiplications, but merely to decide in which order to perform the multiplications.
+
+#We have many options to multiply a chain of matrices because matrix multiplication is associative. In other words, no matter how we parenthesize the product, the result will be the same. For example, if we had four matrices A, B, C, and D, we would have:
+
+#        (ABC)D = (AB)(CD) = A(BCD) = ....
+#        However, the order in which we parenthesize the product affects the number of simple arithmetic operations needed to compute the product, or the efficiency. For example, suppose A is a 10 × 30 matrix, B is a 30 × 5 matrix, and C is a 5 × 60 matrix. Then,
+#
+#            (AB)C = (10×30×5) + (10×5×60) = 1500 + 3000 = 4500 operations
+#                A(BC) = (30×5×60) + (10×30×60) = 9000 + 18000 = 27000 operations.
+#                Clearly the first parenthesization requires less number of operations.
+def matrix_mult(m):
+    size = len(m)
+    dp = np.zeros(shape=(size, size))
+
+    for gap in range(2, size):
+        for j in range(gap, size):
+            i = j - gap
+            if gap == 2:
+                dp[i][j] = m[i] * m[i+1] * m[i+2]
+            else:
+                dp[i][j] = min(dp[i+1][j] + m[i] * m[i+1] * m[j], dp[i][j-1] + m[i] * m[j-1] * m[j])
+
+    print(dp)
+
+    return dp[0][size-1]
+
+#m = [10, 30, 5, 60]
+#m = [40, 20, 30, 10, 30]
+#m = [10, 20, 30, 40, 30]
+#m = [10, 20, 30]
+#print(matrix_mult(m))
