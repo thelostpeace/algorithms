@@ -175,17 +175,20 @@ void inorder_sum(treenode_t *root) {
     while (!s.empty()) {
         treenode_t *top = s.top();
         // go left until there is no left child
-        if (top->left && left != top->left) {
-            s.push(top->left);
-            left = top->left;
-            continue;
-        }
+        if (top->left) {
+            if (left != top->left) {
+                s.push(top->left);
+                left = top->left;
+                continue;
+            } else {
+                left = top;
+            }
+        } 
         // pop left or root
         s.pop();
         // push right child if it has one
         if (top->right) {
             s.push(top->right);
-            left = top;
         }
         // init calc with the first inorder node
         if (calc == NULL) {
@@ -202,6 +205,60 @@ void inorder_sum(treenode_t *root) {
     calc->val = pre;
 }
 
+#define IS_VISITED(x, table) (x == NULL || table[0] == x || table[1] == x)
+
+stack<treenode_t *> find_path(treenode_t *root, int target) {
+    stack<treenode_t *> s;
+    if (root == NULL)
+        return s;
+    s.push(root);
+    vector<treenode_t *> visited = {NULL, NULL};
+    while (!s.empty()) {
+        treenode_t *top = s.top();
+        if (top->val == target) {
+            return s;
+        }
+        if (!IS_VISITED(top->left, visited)) 
+            s.push(top->left);
+        else if (!IS_VISITED(top->right, visited))
+            s.push(top->right);
+        else {
+            s.pop();
+            visited[0] = visited[1];
+            visited[1] = top;
+        }
+    }
+
+    return s;
+}
+
+treenode_t *lowest_common_ancestor(treenode_t *root, int a, int b) {
+    stack<treenode_t *> patha = find_path(root, a);
+    stack<treenode_t *> pathb = find_path(root, b);
+
+    stack<treenode_t *> patha_;
+    while (!patha.empty()) {
+        patha_.push(patha.top());
+        patha.pop();
+    }
+    stack<treenode_t *> pathb_;
+    while (!pathb.empty()) {
+        pathb_.push(pathb.top());
+        pathb.pop();
+    }
+
+    treenode_t *common = NULL;
+    while (!patha_.empty() && !pathb_.empty()) {
+        if (patha_.top() != pathb_.top()) {
+            break;
+        } else {
+            common = patha_.top();
+            patha_.pop();
+            pathb_.pop();
+        }
+    }
+    return common;
+}
 
 int main(int argc, char **argv) {
     //vector<int> data = {79, 81, 77, 86, 42, 62, 36, 26, 97, 19};
@@ -224,8 +281,10 @@ int main(int argc, char **argv) {
     print_binary_tree(root);
     //morris_in_order_traversal(root);
     //inorder_with_stack(root);
-    inorder_sum(root);
-    print_binary_tree(root);
+    //inorder_sum(root);
+    //print_binary_tree(root);
+    treenode_t *common = lowest_common_ancestor(root, 4, 6);
+    cout << (common == NULL ? -1 : common->val) << endl;
 
     return 0;
 }
