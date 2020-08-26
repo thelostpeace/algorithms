@@ -114,19 +114,118 @@ void quicksort_linkedlist(node_t **head) {
     *head = cur;
 }
 
+/***
+ * time complexity O(N), space complexity O(1)
+ */
+void morris_in_order_traversal(treenode_t *root) {
+    treenode_t *cur = root;
+    treenode_t *par = NULL, *subroot;
+    while (cur != NULL) {
+        subroot = cur;
+        if (cur->left) {
+            cur = cur->left;
+            par = cur;
+            while (par->right) {
+                par = par->right;
+            }
+            par->right = subroot; 
+            subroot->left = NULL;
+            //print_binary_tree(cur);
+        } else {
+            cout << cur->val << " ";
+            cur = cur->right;
+        }
+    }
+    cout << endl;
+}
+
+void inorder_with_stack(treenode_t *root) {
+    stack<treenode_t *> s;
+    s.push(root);
+    treenode_t *left = NULL;
+    while (!s.empty()) {
+        treenode_t *top = s.top();
+        if (top->left && left != top->left) {
+            s.push(top->left);
+            left = top->left;
+            continue;
+        } 
+        cout << top->val << " ";
+        s.pop();
+        if (top->right) {
+            s.push(top->right);
+            left = top;
+        } 
+    }
+    cout << endl;
+}
+
+/**
+ * replace each node with sum of it's inorder predecessor and successor
+ */
+void inorder_sum(treenode_t *root) {
+    stack<treenode_t *> s;
+    s.push(root);
+    // store left child, so it is not visited again
+    treenode_t *left = NULL;
+    // store the left value of add
+    int pre = 0;
+    // this is the node we need to calculate value
+    treenode_t *calc = NULL;
+    while (!s.empty()) {
+        treenode_t *top = s.top();
+        // go left until there is no left child
+        if (top->left && left != top->left) {
+            s.push(top->left);
+            left = top->left;
+            continue;
+        }
+        // pop left or root
+        s.pop();
+        // push right child if it has one
+        if (top->right) {
+            s.push(top->right);
+            left = top;
+        }
+        // init calc with the first inorder node
+        if (calc == NULL) {
+            calc = top;
+            continue;
+        }
+        // calculate calc node value
+        int temp = calc->val;
+        calc->val = pre + top->val;
+        pre = temp;
+        calc = top;
+    }
+    // calcualte the last node
+    calc->val = pre;
+}
+
 
 int main(int argc, char **argv) {
-    vector<int> data = {79, 81, 77, 86, 42, 62, 36, 26, 97, 19};
-    gen_vector(data, 0, 100, 10);
-    print_vector(data);
-    node_t *head;
-    create_linkedlist(&head, data);
-    print_linkedlist(head);
+    //vector<int> data = {79, 81, 77, 86, 42, 62, 36, 26, 97, 19};
+    //gen_vector(data, 0, 100, 10);
+    //print_vector(data);
+    //node_t *head;
+    //create_linkedlist(&head, data);
+    //print_linkedlist(head);
 
     //reverse_linkedlist(&head);
     //move_last_to_first(&head);
-    quicksort_linkedlist(&head);
-    print_linkedlist(head);
+    //quicksort_linkedlist(&head);
+    //print_linkedlist(head);
+    
+    vector<int> data = {1, 2, 3, 4, 5, 6, 7};
+    //gen_vector(data, 0, 100, 10);
+    print_vector(data);
+    treenode_t *root;
+    create_binary_tree(&root, data);
+    print_binary_tree(root);
+    //morris_in_order_traversal(root);
+    //inorder_with_stack(root);
+    inorder_sum(root);
+    print_binary_tree(root);
 
     return 0;
 }

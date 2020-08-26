@@ -2,6 +2,8 @@
 #include <time.h>
 #include <stdlib.h>
 #include <vector>
+#include <queue>
+#include <stack>
 using namespace std;
 
 typedef struct node_t {
@@ -45,4 +47,65 @@ void print_vector(vector<int> &data) {
         cout << data[i] << " ";
     }
     cout << "]" << endl;
+}
+
+typedef struct treenode_t {
+    int val;
+    treenode_t *left;
+    treenode_t *right;
+    treenode_t() {
+        left = NULL;
+        right = NULL;
+    }
+} treenode_t;
+
+void create_binary_tree(treenode_t **root, vector<int> &data) {
+    if (data.empty()) {
+        *root = NULL;
+    } else {
+        *root = new treenode_t;
+        (*root)->val = data[0];
+    }
+    queue<treenode_t *> q;
+    q.push(*root);
+    for (int i = 1; i < data.size(); ++i) {
+        treenode_t *node = new treenode_t;
+        node->val = data[i];
+        treenode_t *front = q.front();
+        if (front->left == NULL) {
+            front->left = node;
+        } else if (front->right == NULL) {
+            front->right = node;
+            q.pop();
+        }
+        q.push(node);
+    }
+}
+
+void print_binary_tree(treenode_t *root) {
+    if (root == NULL) {
+        cout << "#" << endl;
+        return;
+    } 
+    queue<treenode_t *> q;
+    q.push(root);
+    int count = 1, step = 0;
+    while (!q.empty()) {
+        treenode_t *front = q.front();
+        if (front->left != NULL) {
+            q.push(front->left);
+        }
+        if (front->right != NULL) {
+            q.push(front->right);
+        }
+        cout << front->val << " ";
+        q.pop();
+        ++step;
+        if (step == count) {
+            cout << " # ";
+            count *= 2;
+            step = 0;
+        }
+    }
+    cout << endl;
 }
