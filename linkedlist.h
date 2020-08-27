@@ -319,7 +319,8 @@ void rbtree_delete(rbtreenode_t **root, int val) {
     // paper is still time costing. left rotation & right rotation & standard binary
     // search tree deletion and insertion and deletion, all time costing.
     
-    // rbtree insertion and deletion need at most 2 rotations. 
+    // rbtree insertion and deletion need at most 2 rotations. avl tree is also a good
+    // one, slower on insertion and deletion than rbtree but faster on searching.
 }
 
 void print_rbtree(rbtreenode_t *root) {
