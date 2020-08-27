@@ -279,12 +279,12 @@ int main(int argc, char **argv) {
     treenode_t *root;
     create_binary_tree(&root, data);
     print_binary_tree(root);
-    //morris_in_order_traversal(root);
+    morris_in_order_traversal(root);
     //inorder_with_stack(root);
     //inorder_sum(root);
     //print_binary_tree(root);
-    treenode_t *common = lowest_common_ancestor(root, 4, 6);
-    cout << (common == NULL ? -1 : common->val) << endl;
+    //treenode_t *common = lowest_common_ancestor(root, 4, 6);
+    //cout << (common == NULL ? -1 : common->val) << endl;
 
     return 0;
 }

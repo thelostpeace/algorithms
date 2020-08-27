@@ -89,23 +89,25 @@ void print_binary_tree(treenode_t *root) {
     } 
     queue<treenode_t *> q;
     q.push(root);
-    int count = 1, step = 0;
+    q.push(NULL);
     while (!q.empty()) {
         treenode_t *front = q.front();
-        if (front->left != NULL) {
+        if (front == NULL) {
+            q.pop();
+            if (q.front()) {
+                cout << "# ";
+                q.push(NULL);
+            }
+            continue;
+        } 
+        if (front->left) {
             q.push(front->left);
-        }
-        if (front->right != NULL) {
+        } 
+        if (front->right) {
             q.push(front->right);
         }
         cout << front->val << " ";
         q.pop();
-        ++step;
-        if (step == count) {
-            cout << " # ";
-            count *= 2;
-            step = 0;
-        }
     }
     cout << endl;
 }
