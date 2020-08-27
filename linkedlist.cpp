@@ -273,18 +273,24 @@ int main(int argc, char **argv) {
     //quicksort_linkedlist(&head);
     //print_linkedlist(head);
     
-    vector<int> data = {1, 2, 3, 4, 5, 6, 7};
+    vector<int> data = {1, 2, 3, 4, 5, 6, 7, 8};
     //gen_vector(data, 0, 100, 10);
     print_vector(data);
-    treenode_t *root;
-    create_binary_tree(&root, data);
-    print_binary_tree(root);
-    morris_in_order_traversal(root);
+    //treenode_t *root;
+    //create_binary_tree(&root, data);
+    //print_binary_tree(root);
+    //morris_in_order_traversal(root);
     //inorder_with_stack(root);
     //inorder_sum(root);
     //print_binary_tree(root);
     //treenode_t *common = lowest_common_ancestor(root, 4, 6);
     //cout << (common == NULL ? -1 : common->val) << endl;
+    rbtreenode_t *root = NULL;
+    for (auto &d : data) {
+        rbtree_insert(&root, d);
+        print_rbtree(root);
+        cout << "======================" << endl;
+    }
 
     return 0;
 }
