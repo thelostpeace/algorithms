@@ -323,6 +323,17 @@ void rbtree_delete(rbtreenode_t **root, int val) {
     // one, slower on insertion and deletion than rbtree but faster on searching.
 }
 
+/***
+ * Advantages of B+ trees:
+ *
+ * https://stackoverflow.com/questions/870218/what-are-the-differences-between-b-trees-and-b-trees
+ * Because B+ trees don't have data associated with interior nodes, more keys can fit on a page of memory. Therefore, it will require fewer cache misses in order to access data that is on a leaf node.
+ * The leaf nodes of B+ trees are linked, so doing a full scan of all objects in a tree requires just one linear pass through all the leaf nodes. A B tree, on the other hand, would require a traversal of every level in the tree. This full-tree traversal will likely involve more cache misses than the linear traversal of B+ leaves.
+ * Advantage of B trees:
+ *
+ * Because B trees contain data with each key, frequently accessed nodes can lie closer to the root, and therefore can be accessed more quickly.'
+ */
+
 void print_rbtree(rbtreenode_t *root) {
     if (root == NULL) {
         cout << "#" << endl;
